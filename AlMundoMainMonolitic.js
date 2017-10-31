@@ -91,9 +91,7 @@ class Destiny {
 	}
 
 //TODO agregar medidor de tiempo
-var entries = loadDataset();
-
-function loadDataset() {
+function main() {
 	var entries = {};
 	// Load dataset and init open set
 	var fs = require('fs');
@@ -127,9 +125,9 @@ function loadDataset() {
 
 }
 
-//main();
+main();
 
-	PriorityQueue<State> open = new PriorityQueue<>();
+/*	PriorityQueue<State> open = new PriorityQueue<>();
 	for (Entry<UUID, Destiny> entry : entries.entrySet()) {
 		Destiny destiny = entry.getValue();
 		destiny.vuelosordered = destiny.vuelos.toArray(new Item[] {});
@@ -215,4 +213,4 @@ private static void writeFile(State current) throws IOException {
 
 	outputFile.write(line);
 }
-
+*/
