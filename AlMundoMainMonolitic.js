@@ -24,12 +24,12 @@ const LINE_IN_BYTES = (36 + 1 + 36 + 1);
 //const COMMA = ",".getBytes(StandardCharsets.US_ASCII)[0];
 //const NEWLINE = "\n".getBytes(StandardCharsets.US_ASCII)[0];
 
-function compareCosts(a,b) {
-	return a.cost - b.cost;
+function orderDesc(a,b) {
+	return a.cost > b.cost;
 }
 
-function compareStateSolution(a,b) {
-	return b.cost - a.cost;
+function orderAsc(a,b) {
+	return b.cost > a.cost;
 }
 
 class Item {
@@ -101,8 +101,12 @@ class Destiny {
 		}
 
 		sort(){
-			this.vuelos.sort(compareCosts);
-			this.hoteles.sort(compareCosts);
+			this.vuelos.sort(function (a,b) {
+				return a.cost - b.cost;
+			});
+			this.hoteles.sort(function (a,b) {
+				return a.cost - b.cost;
+			});
 			this.vuelosordered = this.vuelos;
 			this.hotelesordered = this.hoteles;
 		}
@@ -110,8 +114,8 @@ class Destiny {
 
 let fs = require('fs');
 let FastPriorityQueue = require("./FastPriorityQueue");
-let open = new FastPriorityQueue(compareStateSolution);
-let close = new FastPriorityQueue(compareCosts);
+let open = new FastPriorityQueue(orderDesc);
+let close = new FastPriorityQueue(orderAsc);
 
 function initializeSolutions(entries) {
 	let initialAdded = 0;
