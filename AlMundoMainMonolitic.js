@@ -13,7 +13,7 @@ import java.util.PriorityQueue;
 import java.util.TreeSet;
 import java.util.UUID;*/
 
-
+console.time('main()');
 	
 const INPUT_FILE="./dataset.csv";
 const OUTPUT_FILE="./combos.csv";
@@ -213,27 +213,28 @@ function saveSolution(firstSolutions){
 		writeFile(firstSolutions[i],outputFile);
 	}
 
-
 	// Continue execution
-	/*while ((current = open.poll()) != null) {
-
-		State worst = close.peek();
+	while (!open.isEmpty()) {
+		let current = open.poll();
+		let worst = close.peek();
 		if (worst.cost < current.cost) {
 			close.poll();
 			current.filePosition = worst.filePosition;
 			close.add(current);
-
-			writeFile(current);
+			writeFile(current,outputFile);
 		}
 
-		State[] succesors = current.succesors();
-
-		for (State succesor : succesors) {
-			if (succesor.cost <= COST_LIMIT)
+		let succesors = current.succesors();
+		for (let e=0 ; e<succesors.length ; e++) {
+			let succesor = succesors[e];
+			if (succesor.cost <= COST_LIMIT) {
 				open.add(succesor);
+			}
 		}
 	}
-	outputFile.close();*/
+
+	console.timeEnd('main()');
+
 }
 
 /*private static void writeFile(State[] firstSolutions) throws IOException {
