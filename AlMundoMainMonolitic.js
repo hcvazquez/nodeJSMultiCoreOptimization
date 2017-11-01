@@ -83,14 +83,72 @@ class Destiny {
 		constructor(/*TreeSet<Item>*/vuelos, /*TreeSet<Item>*/ hoteles) {
 			this.vuelos = vuelos;
 			this.hoteles = hoteles;
+			this.vuelosordered = [];
+			this.hotelesordered = [];
 		}
 
 		/*Item[] vuelosordered;
 		Item[] hotelesordered;*/
 		cost(posvuelo, poshotel){
-			return vuelosordered[posvuelo].cost + hotelesordered[poshotel].cost;
+			return this.vuelosordered[posvuelo].cost + this.hotelesordered[poshotel].cost;
 		}
 	}
+
+function initializeSolutions(entries) {
+
+	function compareCosts(a,b) {
+		return a.cost < b.cost;
+	}
+
+	function compareStateSolution(a,b) {
+		return b.cost < a.cost;
+	}
+
+	var FastPriorityQueue = require("./FastPriorityQueue");
+
+	var open = new FastPriorityQueue(compareStateSolution);
+
+
+	for (var property in entries) {
+		var destiny = entries[property];
+		console.log("vuelos = "+destiny.vuelos);
+		console.log("hoteles = "+destiny.hoteles);
+		console.log("id, property = "+property);
+		destiny.vuelosordered = destiny.vuelos.sort(compareCosts);
+		destiny.hotelesordered = destiny.hoteles.sort(compareCosts);
+
+		var initialcost = destiny.cost(0, 0);
+
+		if (initialcost <= COST_LIMIT) {
+			open.add(new State(destiny, 0, 0, 1, initialcost));
+		}
+	}
+
+// Execute first 40000 solutions
+	/*var close = new FastPriorityQueue(compareCosts);
+
+	var firstSolutions = [];//new State[MAX_COMBINACIONES];
+	var current;
+	for (var position = 0; position < MAX_COMBINACIONES; position++) {
+		current = open.poll();
+		current.filePosition = position;
+		close.add(current);
+		firstSolutions.push(current);
+		var succesors = current.succesors();
+		for (var succesor in succesors) {
+			if (succesor.cost <= COST_LIMIT)
+				open.add(succesor);
+		}
+	}*/
+
+	return open;
+}
+
+function printSolutions(close){
+	while(!close.isEmpty()){
+		console.log(close.poll().cost);
+	}
+}
 
 //TODO agregar medidor de tiempo
 function main() {
@@ -100,26 +158,42 @@ function main() {
 	var lineReader = require('readline').createInterface({
 		input: require('fs').createReadStream(INPUT_FILE)
 	});
+	/*var c1 = 0;
+	var c2 = 0;
+	var c3 = 0;
+	var lines = 0;*/
 	lineReader.on('line', function (line) {
+//		lines++;
 		var entry = line.split(",");
 		var uuiddestiny = entry[2];
 		if (typeof entries[uuiddestiny] == "undefined") {
+		//	c1++;
 			entries[uuiddestiny] = new Destiny([], []);
 		}
 		if (entry[1].charAt(0) === 'V') {
+		//	c2++;
 			entries[uuiddestiny].vuelos.push(new Item(entry[0], entry[3]));
 		} else {
+		//	c3++;
 			entries[uuiddestiny].hoteles.push(new Item(entry[0], entry[3]));
 		}
 	});
 
 
 	lineReader.on('close', function () {
-		for (var property in entries) {
+		/*for (var property in entries) {
 			if (entries.hasOwnProperty(property)) {
 				console.log(entries[property]);
 			}
-		}
+		}*/
+		//console.log(Object.keys(entries).length);
+
+		var close = initializeSolutions(entries);
+
+		printSolutions(close);
+
+		/*console.log("c1,c2,c3: "+ c1 +","+ c2 +","+ c3 );
+		console.log(lines);*/
 
 
 	});
@@ -129,44 +203,8 @@ function main() {
 
 main();
 
-var FastPriorityQueue = require("./FastPriorityQueue");
 
-var open = new FastPriorityQueue();
-/*for (Entry<UUID, Destiny> entry : entries.entrySet()) {
-	Destiny destiny = entry.getValue();
-	destiny.vuelosordered = destiny.vuelos.toArray(new Item[] {});
-	destiny.hotelesordered = destiny.hoteles.toArray(new Item[] {});
-
-	int initialcost = destiny.cost(0, 0);
-	if (initialcost <= COST_LIMIT)
-		open.add(new State(destiny, 0, 0, State.StateType.RIGHTUP, initialcost));
-
-}
-
-	// Execute first 40000 solutions
-	PriorityQueue<State> close = new PriorityQueue<>(MAX_COMBINACIONES, new Comparator<State>() {
-		@Override
-		public int compare(State o1, State o2) {
-			return Integer.compare(o1.cost, o2.cost);
-		}
-	});
-
-	State[] firstSolutions = new State[MAX_COMBINACIONES];
-	State current;
-	for (int position = 0; position < MAX_COMBINACIONES; position++) {
-		current = open.poll();
-		current.filePosition = position;
-		close.add(current);
-		firstSolutions[position]=current;
-
-		State[] succesors = current.succesors();
-
-		for (State succesor : succesors) {
-			if (succesor.cost <= COST_LIMIT)
-				open.add(succesor);
-		}
-	}
-
+/*
 	outputFile = new RandomAccessFile(OUTPUT_FILE, "rw");
 	outputFile.setLength(40000 * LINE_IN_BYTES);
 	writeFile(firstSolutions);
@@ -217,5 +255,4 @@ private static void writeFile(State current) throws IOException {
 
 	outputFile.write(line);
 }
-
 */
