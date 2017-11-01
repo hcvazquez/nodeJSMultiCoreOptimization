@@ -108,10 +108,12 @@ class Destiny {
 		}
 }
 
-function initializeSolutions(entries) {
+let fs = require('fs');
+let FastPriorityQueue = require("./FastPriorityQueue");
+let open = new FastPriorityQueue(compareStateSolution);
+let close = new FastPriorityQueue(compareCosts);
 
-	let FastPriorityQueue = require("./FastPriorityQueue");
-	let open = new FastPriorityQueue(compareStateSolution);
+function initializeSolutions(entries) {
 	let initialAdded = 0;
 
 	for (let property in entries) {
@@ -130,7 +132,6 @@ function initializeSolutions(entries) {
 	//console.log("initialAdded: "+initialAdded);
 
 // Execute first 40000 solutions
-	let close = new FastPriorityQueue(compareCosts);
 
 	let firstSolutions = [];//new State[MAX_COMBINACIONES];
 	let current;
@@ -148,9 +149,7 @@ function initializeSolutions(entries) {
 		}
 	}
 
-	console.log("pool size "+ close.size);
-
-	return close;
+	return firstSolutions;
 }
 
 function printSolutions(close){
@@ -163,7 +162,6 @@ function printSolutions(close){
 function main() {
 	let entries = {};
 	// Load dataset and init open set
-	let fs = require('fs');
 	let lineReader = require('readline').createInterface({
 		input: require('fs').createReadStream(INPUT_FILE)
 	});
@@ -189,12 +187,16 @@ function main() {
 		}*/
 		//console.log(Object.keys(entries).length);
 
-		let close = initializeSolutions(entries);
+		let firstSolutions2 = initializeSolutions(entries);
 
+
+		console.log("pool size "+ firstSolutions2.length);
 		//printSolutions(close);
 
 		/*console.log("c1,c2,c3: "+ c1 +","+ c2 +","+ c3 );
 		console.log(lines);*/
+
+		saveSolution(firstSolutions2);
 
 
 	});
@@ -202,16 +204,18 @@ function main() {
 
 }
 
-main();
 
+function saveSolution(firstSolutions){
 
-/*
-	outputFile = new RandomAccessFile(OUTPUT_FILE, "rw");
-	outputFile.setLength(40000 * LINE_IN_BYTES);
-	writeFile(firstSolutions);
+	let outputFile = fs.openSync(OUTPUT_FILE,'w');
+
+	for(let i = 0; i< firstSolutions.length; i++){
+		writeFile(firstSolutions[i],outputFile);
+	}
+
 
 	// Continue execution
-	while ((current = open.poll()) != null) {
+	/*while ((current = open.poll()) != null) {
 
 		State worst = close.peek();
 		if (worst.cost < current.cost) {
@@ -229,11 +233,10 @@ main();
 				open.add(succesor);
 		}
 	}
-
-	outputFile.close();
+	outputFile.close();*/
 }
 
-private static void writeFile(State[] firstSolutions) throws IOException {
+/*private static void writeFile(State[] firstSolutions) throws IOException {
 	byte[] content=new byte[firstSolutions.length*LINE_IN_BYTES];
 	for(int i=0;i<firstSolutions.length;i++){
 		State current = firstSolutions[i];
@@ -243,17 +246,11 @@ private static void writeFile(State[] firstSolutions) throws IOException {
 		content[i*LINE_IN_BYTES+73]=NEWLINE;
 	}
 	outputFile.write(content);
+}*/
+
+function writeFile(current,outputFile){
+	let line = current.getVueloUUID() + "," + current.getHotelUUID() + "\n";
+	fs.writeSync(outputFile,line,current.filePosition * LINE_IN_BYTES);
 }
 
-private static void writeFile(State current) throws IOException {
-	outputFile.seek(current.filePosition * LINE_IN_BYTES);
-
-	byte[] line=new byte[LINE_IN_BYTES];
-	System.arraycopy(current.getVueloUUID().toString().getBytes(StandardCharsets.US_ASCII), 0, line, 0, 36);
-	line[36]=COMMA;
-	System.arraycopy(current.getHotelUUID().toString().getBytes(StandardCharsets.US_ASCII), 0, line, 37, 36);
-	line[73]=NEWLINE;
-
-	outputFile.write(line);
-}
-*/
+main();
