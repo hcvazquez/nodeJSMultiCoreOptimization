@@ -212,6 +212,7 @@ function saveSolution(firstSolutions){
 	}
 
 	// Continue execution
+	let iter = 0;
 	while (!open.isEmpty()) {
 		let current = open.poll();
 		let worst = close.peek();
@@ -229,6 +230,11 @@ function saveSolution(firstSolutions){
 				open.add(succesor);
 			}
 		}
+		iter++;
+	}
+
+	if(open.isEmpty()){
+		console.log("EMPTY in iteration: "+iter);
 	}
 
 	console.timeEnd('main()');
