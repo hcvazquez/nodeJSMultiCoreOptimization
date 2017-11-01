@@ -12,6 +12,8 @@ import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.TreeSet;
 import java.util.UUID;*/
+
+
 	
 const INPUT_FILE="./dataset.csv";
 const OUTPUT_FILE="./combos.csv";
@@ -127,17 +129,19 @@ function main() {
 
 main();
 
-/*	PriorityQueue<State> open = new PriorityQueue<>();
-	for (Entry<UUID, Destiny> entry : entries.entrySet()) {
-		Destiny destiny = entry.getValue();
-		destiny.vuelosordered = destiny.vuelos.toArray(new Item[] {});
-		destiny.hotelesordered = destiny.hoteles.toArray(new Item[] {});
+var FastPriorityQueue = require("./FastPriorityQueue");
 
-		int initialcost = destiny.cost(0, 0);
-		if (initialcost <= COST_LIMIT)
-			open.add(new State(destiny, 0, 0, State.StateType.RIGHTUP, initialcost));
+var open = new FastPriorityQueue();
+/*for (Entry<UUID, Destiny> entry : entries.entrySet()) {
+	Destiny destiny = entry.getValue();
+	destiny.vuelosordered = destiny.vuelos.toArray(new Item[] {});
+	destiny.hotelesordered = destiny.hoteles.toArray(new Item[] {});
 
-	}
+	int initialcost = destiny.cost(0, 0);
+	if (initialcost <= COST_LIMIT)
+		open.add(new State(destiny, 0, 0, State.StateType.RIGHTUP, initialcost));
+
+}
 
 	// Execute first 40000 solutions
 	PriorityQueue<State> close = new PriorityQueue<>(MAX_COMBINACIONES, new Comparator<State>() {
@@ -213,4 +217,5 @@ private static void writeFile(State current) throws IOException {
 
 	outputFile.write(line);
 }
+
 */
