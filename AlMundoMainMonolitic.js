@@ -189,8 +189,6 @@ function main() {
 
 		let firstSolutions2 = initializeSolutions(entries);
 
-
-		console.log("pool size "+ firstSolutions2.length);
 		//printSolutions(close);
 
 		/*console.log("c1,c2,c3: "+ c1 +","+ c2 +","+ c3 );
