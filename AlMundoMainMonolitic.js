@@ -29,7 +29,7 @@ function compareCosts(a,b) {
 }
 
 function compareStateSolution(a,b) {
-	return b.cost > a.cost;
+	return b.cost - a.cost;
 }
 
 class Item {
