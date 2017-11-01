@@ -16,7 +16,7 @@ import java.util.UUID;*/
 console.time('main()');
 	
 const INPUT_FILE="./dataset.csv";
-const OUTPUT_FILE="./combos.csv";
+const OUTPUT_FILE="./combos2.csv";
 
 const MAX_COMBINACIONES = 40000;
 const COST_LIMIT = 30000;
@@ -29,7 +29,7 @@ function compareCosts(a,b) {
 }
 
 function compareStateSolution(a,b) {
-	return b.cost < a.cost;
+	return b.cost > a.cost;
 }
 
 class Item {
@@ -180,22 +180,10 @@ function main() {
 
 
 	lineReader.on('close', function () {
-		/*for (let property in entries) {
-			if (entries.hasOwnProperty(property)) {
-				console.log(entries[property]);
-			}
-		}*/
-		//console.log(Object.keys(entries).length);
 
 		let firstSolutions2 = initializeSolutions(entries);
 
-		//printSolutions(close);
-
-		/*console.log("c1,c2,c3: "+ c1 +","+ c2 +","+ c3 );
-		console.log(lines);*/
-
 		saveSolution(firstSolutions2);
-
 
 	});
 
