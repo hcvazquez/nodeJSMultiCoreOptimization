@@ -11,7 +11,7 @@ fs.writeSync(fd, buffer, offset, length, position)
 fs.read(fd, buffer, offset, length, position, callback)
 fs.readSync(fd, buffer, offset, length, position)
 
-var maxLoop = 4;
+let maxLoop = 4;
 
 if (cluster.isMaster) {
     console.log(`Master ${process.pid} is running`);

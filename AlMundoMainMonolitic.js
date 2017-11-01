@@ -24,6 +24,13 @@ const LINE_IN_BYTES = (36 + 1 + 36 + 1);
 //const COMMA = ",".getBytes(StandardCharsets.US_ASCII)[0];
 //const NEWLINE = "\n".getBytes(StandardCharsets.US_ASCII)[0];
 
+function compareCosts(a,b) {
+	return a.cost - b.cost;
+}
+
+function compareStateSolution(a,b) {
+	return b.cost < a.cost;
+}
 
 class Item {
 	constructor(UUIDitemstring, costo) {
@@ -80,7 +87,7 @@ class State {
 }
 
 class Destiny {
-		constructor(/*TreeSet<Item>*/vuelos, /*TreeSet<Item>*/ hoteles) {
+		constructor(vuelos, hoteles) {
 			this.vuelos = vuelos;
 			this.hoteles = hoteles;
 			this.vuelosordered = [];
@@ -92,56 +99,58 @@ class Destiny {
 		cost(posvuelo, poshotel){
 			return this.vuelosordered[posvuelo].cost + this.hotelesordered[poshotel].cost;
 		}
-	}
+
+		sort(){
+			this.vuelos.sort(compareCosts);
+			this.hoteles.sort(compareCosts);
+			this.vuelosordered = this.vuelos;
+			this.hotelesordered = this.hoteles;
+		}
+}
 
 function initializeSolutions(entries) {
 
-	function compareCosts(a,b) {
-		return a.cost < b.cost;
-	}
+	let FastPriorityQueue = require("./FastPriorityQueue");
+	let open = new FastPriorityQueue(compareStateSolution);
+	let initialAdded = 0;
 
-	function compareStateSolution(a,b) {
-		return b.cost < a.cost;
-	}
+	for (let property in entries) {
+		if (entries.hasOwnProperty(property)) {
+			initialAdded++;
+			let destiny = entries[property];
+			destiny.sort();
 
-	var FastPriorityQueue = require("./FastPriorityQueue");
-
-	var open = new FastPriorityQueue(compareStateSolution);
-
-
-	for (var property in entries) {
-		var destiny = entries[property];
-		console.log("vuelos = "+destiny.vuelos);
-		console.log("hoteles = "+destiny.hoteles);
-		console.log("id, property = "+property);
-		destiny.vuelosordered = destiny.vuelos.sort(compareCosts);
-		destiny.hotelesordered = destiny.hoteles.sort(compareCosts);
-
-		var initialcost = destiny.cost(0, 0);
-
-		if (initialcost <= COST_LIMIT) {
-			open.add(new State(destiny, 0, 0, 1, initialcost));
+			let initialcost = destiny.cost(0, 0);
+			//console.log("InitialAdded, Cost: "+initialAdded+","+initialcost);
+			if (initialcost <= COST_LIMIT) {
+				open.add(new State(destiny, 0, 0, 1, initialcost));
+			}
 		}
 	}
+	//console.log("initialAdded: "+initialAdded);
 
 // Execute first 40000 solutions
-	/*var close = new FastPriorityQueue(compareCosts);
+	let close = new FastPriorityQueue(compareCosts);
 
-	var firstSolutions = [];//new State[MAX_COMBINACIONES];
-	var current;
-	for (var position = 0; position < MAX_COMBINACIONES; position++) {
+	let firstSolutions = [];//new State[MAX_COMBINACIONES];
+	let current;
+	for (let position = 0; position < MAX_COMBINACIONES ; position++) {
 		current = open.poll();
 		current.filePosition = position;
 		close.add(current);
 		firstSolutions.push(current);
-		var succesors = current.succesors();
-		for (var succesor in succesors) {
-			if (succesor.cost <= COST_LIMIT)
+		let succesors = current.succesors();
+		for (let e=0 ; e<succesors.length ; e++) {
+			let succesor = succesors[e];
+			if (succesor.cost <= COST_LIMIT) {
 				open.add(succesor);
+			}
 		}
-	}*/
+	}
 
-	return open;
+	console.log("pool size "+ close.size);
+
+	return close;
 }
 
 function printSolutions(close){
@@ -152,45 +161,37 @@ function printSolutions(close){
 
 //TODO agregar medidor de tiempo
 function main() {
-	var entries = {};
+	let entries = {};
 	// Load dataset and init open set
-	var fs = require('fs');
-	var lineReader = require('readline').createInterface({
+	let fs = require('fs');
+	let lineReader = require('readline').createInterface({
 		input: require('fs').createReadStream(INPUT_FILE)
 	});
-	/*var c1 = 0;
-	var c2 = 0;
-	var c3 = 0;
-	var lines = 0;*/
 	lineReader.on('line', function (line) {
-//		lines++;
-		var entry = line.split(",");
-		var uuiddestiny = entry[2];
+		let entry = line.split(",");
+		let uuiddestiny = entry[2];
 		if (typeof entries[uuiddestiny] == "undefined") {
-		//	c1++;
 			entries[uuiddestiny] = new Destiny([], []);
 		}
 		if (entry[1].charAt(0) === 'V') {
-		//	c2++;
 			entries[uuiddestiny].vuelos.push(new Item(entry[0], entry[3]));
 		} else {
-		//	c3++;
 			entries[uuiddestiny].hoteles.push(new Item(entry[0], entry[3]));
 		}
 	});
 
 
 	lineReader.on('close', function () {
-		/*for (var property in entries) {
+		/*for (let property in entries) {
 			if (entries.hasOwnProperty(property)) {
 				console.log(entries[property]);
 			}
 		}*/
 		//console.log(Object.keys(entries).length);
 
-		var close = initializeSolutions(entries);
+		let close = initializeSolutions(entries);
 
-		printSolutions(close);
+		//printSolutions(close);
 
 		/*console.log("c1,c2,c3: "+ c1 +","+ c2 +","+ c3 );
 		console.log(lines);*/

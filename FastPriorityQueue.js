@@ -11,8 +11,8 @@
 
  Running test program (in JavaScript):
 
- // var FastPriorityQueue = require("fastpriorityqueue");// in node
- var x = new FastPriorityQueue();
+ // let FastPriorityQueue = require("fastpriorityqueue");// in node
+ let x = new FastPriorityQueue();
  x.add(1);
  x.add(0);
  x.add(5);
@@ -27,7 +27,7 @@
  */
 "use strict";
 
-var defaultcomparator = function (a, b) {
+let defaultcomparator = function (a, b) {
     return a < b;
 };
 
@@ -43,11 +43,11 @@ function FastPriorityQueue(comparator) {
 // Add an element the the queue
 // runs in O(log n) time
 FastPriorityQueue.prototype.add = function (myval) {
-    var i = this.size;
+    let i = this.size;
     this.array[this.size] = myval;
     this.size += 1;
-    var p;
-    var ap;
+    let p;
+    let ap;
     while (i > 0) {
         p = (i - 1) >> 1;
         ap = this.array[p];
@@ -64,7 +64,7 @@ FastPriorityQueue.prototype.add = function (myval) {
 FastPriorityQueue.prototype.heapify = function (arr) {
     this.array = arr;
     this.size = arr.length;
-    var i;
+    let i;
     for (i = (this.size >> 1); i >= 0; i--) {
         this._percolateDown(i);
     }
@@ -72,9 +72,9 @@ FastPriorityQueue.prototype.heapify = function (arr) {
 
 // for internal use
 FastPriorityQueue.prototype._percolateUp = function (i) {
-    var myval = this.array[i];
-    var p;
-    var ap;
+    let myval = this.array[i];
+    let p;
+    let ap;
     while (i > 0) {
         p = (i - 1) >> 1;
         ap = this.array[p];
@@ -90,12 +90,12 @@ FastPriorityQueue.prototype._percolateUp = function (i) {
 
 // for internal use
 FastPriorityQueue.prototype._percolateDown = function (i) {
-    var size = this.size;
-    var hsize = this.size >>> 1;
-    var ai = this.array[i];
-    var l;
-    var r;
-    var bestc;
+    let size = this.size;
+    let hsize = this.size >>> 1;
+    let ai = this.array[i];
+    let l;
+    let r;
+    let bestc;
     while (i < hsize) {
         l = (i << 1) + 1;
         r = l + 1;
@@ -140,7 +140,7 @@ FastPriorityQueue.prototype.peek = function () {
 FastPriorityQueue.prototype.poll = function () {
     if (this.size == 0)
         return undefined;
-    var ans = this.array[0];
+    let ans = this.array[0];
     if (this.size > 1) {
         this.array[0] = this.array[--this.size];
         this._percolateDown(0 | 0);
@@ -157,7 +157,7 @@ FastPriorityQueue.prototype.poll = function () {
 FastPriorityQueue.prototype.replaceTop = function (myval) {
     if (this.size == 0)
         return undefined;
-    var ans = this.array[0];
+    let ans = this.array[0];
     this.array[0] = myval;
     this._percolateDown(0 | 0);
     return ans;
@@ -175,9 +175,9 @@ FastPriorityQueue.prototype.isEmpty = function () {
 };
 
 // just for illustration purposes
-var main = function () {
+let main = function () {
     // main code
-    var x = new FastPriorityQueue(function (a, b) {
+    let x = new FastPriorityQueue(function (a, b) {
         return a < b;
     });
     x.add(1);
